@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/info.css">
+    <title>管理员中心</title>
+</head>
+<body>
+	<div class="welcome">欢迎来到管理员界面</div>
+	<div class="scanborrow" onclick="scanborrow()">扫码借阅</div>
+	<div class="scanreturn" onclick="scanreturn()">扫码归还</div>
+	<script>
+		function scanborrow(){
+			window.location.href='index/borrow.html';
+		}
+		function scanreturn(){
+			window.location.href='index/return.html';
+		}
+	</script>
+</body>
+</html>

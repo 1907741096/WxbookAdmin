@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<meta name="HandheldFriendly" content="true"/>
+		<meta name="MobileOptimized" content="320"/>
+		<title>扫码还书</title>
+		<script type="text/javascript" src="../js/jquery.js" ></script>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/base.js" ></script>
+		<script type="text/javascript" src="../js/config.js" ></script>
+		<script type="text/javascript">
+var img = null;
+var blist = [];
+function processData(r){
+	var id=Math.floor(r/10000000000);
+	var url=http+'wxbook/api.php?c=borrow&a=getBorrowByUserId&userid='+id;
+	$.get(url,function(res){
+		if(res.status==1){
+			var data=res.borrow;
+			document.getElementById('userid').value=data[0].userid;
+			for(var i=1;i<=data.length;i++){
+				if(i>2) document.getElementById('books2').style.display='flex';
+				if(i>4) document.getElementById('books3').style.display='flex';
+				document.getElementById('book'+i).style.display='block';
+				document.getElementById('image'+i).src=data[i-1].image;
+				document.getElementById('title'+i).innerHTML=data[i-1].title;
+				document.getElementById('isbn'+i).innerHTML=data[i-1].isbn;
+				document.getElementById('borrowid'+i).value=data[i-1].id;
+			}
+		}else{
+			
+		}
+	},'json');
+}
+function scaned(t, r, f){
+	processData(r);
+	var d = new Date();
+	var h=d.getHours(),m=d.getMinutes(),s=d.getSeconds(),ms=d.getMilliseconds();
+	if(h < 10){ h='0'+h; }
+	if(m < 10){ m='0'+m; }
+	if(s < 10){ s='0'+s; }
+	if(ms < 10){ ms='00'+ms; }
+	else if(ms < 100){ ms='0'+ms; }
+	var ts = '['+h+':'+m+':'+s+'.'+ms+']';
+	var li=null,hl = document.getElementById('history');
+	if(blist.length > 0){
+		li = document.createElement('li');
+		li.className = 'ditem';
+		hl.insertBefore(li, hl.childNodes[0]);
+	} else{
+		li = document.getElementById('nohistory');
+	}
+	li.id = blist.length;
+	var html = '['+h+':'+m+':'+s+'.'+ms+']'+'　　'+t+'码<div class="hdata">';
+	html += r;
+	html += '</div>';
+	li.innerHTML = html;
+	li.setAttribute('onclick', 'selected(id)');
+	blist[blist.length] = {type:t,result:r,file:f};
+	update(t, r, f);
+}
+function selected(id){
+	var h = blist[id];
+	update( h.type, h.result, h.file );
+	if(h.result.indexOf('http://')==0  || h.result.indexOf('https://')==0){
+		plus.nativeUI.confirm(h.result, function(i){
+			if(i.index == 0){
+				plus.runtime.openURL(h.result);
+			}
+		}, '', ['打开', '取消']);
+	} else{
+		plus.nativeUI.alert(h.result);
+	}
+}
+function update(t, r, f){
+	outSet('扫描成功：');
+	outLine(t);
+	outLine(r);
+	outLine('\n图片地址：'+f);
+	if(!f || f=='null'){
+		img.src = '../img/barcode.png';	
+	} else{
+		plus.io.resolveLocalFileSystemURL(f, function(entry){
+			img.src=entry.toLocalURL();
+		});
+		//img.src = 'http://localhost:13131/'+f;
+	}
+}
+function onempty(){
+	if(window.plus){
+		plus.nativeUI.alert('无扫描记录');
+	} else {
+		alert('无扫描记录');
+	}
+}
+function cleanHistroy(){
+	if(blist.length > 0){
+		var hl = document.getElementById('history');
+		hl.innerHTML = '<li id="nohistory" class="ditem" onclick="onempty();">无历史记录	</li>';
+	}
+	plus.io.resolveLocalFileSystemURL('_doc/barcode/', function(entry){
+		entry.removeRecursively(function(){
+			// Success
+		}, function(e){
+			//alert( "failed"+e.message );
+		});
+	});
+}
+function returnbook(){
+	var data = $("#form").serializeArray();
+    postData = {};
+    postData['borrowid']={};
+    $(data).each(function(i){
+    	if(this.name=='userid'){
+    		postData[this.name] = this.value;
+    	}else{
+    		postData['borrowid'][i] = this.value;
+    	}
+    });
+    var url = SCOPE.url;
+    var jump_url=SCOPE.jump_url;
+    //window.location.href=jump_url; return;
+    $.post(url,postData,function(result){
+        if(result.status == 1) {
+            //成功
+            alert(result.message);
+            window.location.href=jump_url; 
+        }else if(result.status == 0) {
+            // 失败     
+            alert(result.message);
+        }
+    },"json");
+}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8"/>
+		<style type="text/css" media="screen">
+.hdata {
+	color: #e1673e;	
+	font-size: 14px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+		</style>
+	</head>
+	<body onload="img=document.getElementById('bimg')">
+		<header id="header">
+			<div class="nvbt iback" onclick="backinfo()"><</div>
+			<div class="nvtt">扫码归还</div>
+		</header>
+		<div id="dcontent" class="dcontent">
+			<br/>
+			<img style="width:40%" id="bimg" src="../img/barcode.png"/>
+			<br/>
+			<div class="button" onclick="clicked('barcode_scan.html',true,true)">扫一扫</div>
+			<br/>
+			<form id="form">
+				<div class="books2">
+					<div class="book" id="book1">
+						<img src="" id="image1">
+						<text id="title1" class="title"></text>
+						<text id="isbn1"  class="isbn"></text>
+						<br>
+						<input name="borrowid1" value="" type="checkbox" id="borrowid1" class="borrow"/>
+					</div>
+					<div class="book" id="book2">
+						<img src="" id="image2">
+						<text id="title2" class="title"></text>
+						<text id="isbn2"  class="isbn"></text>
+						<br>
+						<input name="borrowid2" value="" type="checkbox" id="borrowid2" class="borrow"/>
+					</div>
+				</div>
+				<div class="books2" style="display: none;" id="books2">
+					<div class="book" id="book3">
+						<img src="" id="image3">
+						<text id="title3" class="title"></text>
+						<text id="isbn3"  class="isbn"></text>
+						<br>
+						<input name="borrowid3" value="" type="checkbox" id="borrowid3" class="borrow"/>
+					</div>
+					<div class="book" id="book4">
+						<img src="" id="image4">
+						<text id="title4" class="title"></text>
+						<text id="isbn4"  class="isbn"></text>
+						<br>
+						<input name="borrowid4" value="" type="checkbox" id="borrowid4" class="borrow"/>
+					</div>
+				</div>
+				<div class="books2" style="display: none;" id="books3">
+					<div class="book" id="book5">
+						<img src="" id="image5">
+						<text id="title5" class="title"></text>
+						<text id="isbn5"  class="isbn"></text>
+						<br>
+						<input name="borrowid5" value="" type="checkbox" id="borrowid5" class="borrow"/>
+					</div>
+					<div class="book" id="book6">
+						<img src=""/ id="image6">
+						<text id="title6" class="title"></text>
+						<text id="isbn6"  class="isbn"></text>
+						<br>
+						<input name="borrowid6" value="" type="checkbox" id="borrowid6" class="borrow"/>
+					</div>
+				</div>
+					<div id="message"></div>
+				</div>
+				<br/>
+				<input name="userid" value="" type="hidden" id="userid"/>
+				<input type="button" class="button" id="submit" value="确认无误，同意归还" onclick="returnbook()"/>
+			</form>
+			<div class="button button-waring" onclick="cleanHistroy()" style="display: none;">清空历史记录</div>
+		</div>
+		<div id="output" style="display: none;">
+Barcode提供二维码扫描识别功能，支持调用摄像头即时扫描二维码，也可直接输入图片进行扫描识别。
+		</div>
+		<ul id="history" class="dlist" style="text-align:left; display: none;">
+			<li id="nohistory" class="ditem" onclick="onempty()">无历史记录	</li>
+		</ul>
+	</body>
+	<script type="text/javascript">
+		var SCOPE={
+			'url':http+'wxbook/api.php?c=borrow&a=returnbook',
+			'jump_url':'return.html'
+		}
+	</script>
+	<script type="text/javascript" src="../js/immersed.js" ></script>
+</html>

@@ -1,0 +1,76 @@
+html,body{
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	position:relative;
+	/*background-color: #f9e6b7;复古*/
+	/*background-color: #ddfdd1;护眼*/
+}
+input,select,textarea,button{
+	outline: none;
+}
+textarea{
+	resize: none;
+}
+a{
+	text-decoration: none;
+}
+.background{
+	position: fixed;
+	z-index: -1;
+	-webkit-filter:blur(3px);
+}
+.login{
+	width: 76%;
+	height: 80%;
+	margin: auto;
+	position: absolute;
+	top: 0; left: 0; bottom: 0; right: 0; 
+	display: flex;
+	flex-direction: column;
+}
+.login-logo{
+	width: 100%;
+	font-size: 20px;
+	text-align: center;
+}
+.login-input{
+	margin-top: 40%;
+}
+/*.login-input:hover{
+	margin-top: 30%;
+}*/
+.login-user{
+	width: 100%;
+	height:40px;
+	border: none;
+	background: none;
+	border-bottom: 1px solid #666;
+	padding: 0;
+	font-size: 16px;
+	outline: none;
+	text-align: center;
+}
+.login-psw{
+	width: 100%;
+	height:40px;
+	border: none;
+	background: none;
+	border-bottom: 1px solid #666;
+	padding: 0
+	font-size: 16px;
+	outline: none;
+	text-align: center;
+}
+.login-sub{
+	width: 100%;
+	height:40px;
+	background-color: #222;
+	color: #FFF;
+	border-radius: 5px;
+	border:none;
+	font-size: 16px;
+	margin-top: 30px;
+	outline: none;
+}

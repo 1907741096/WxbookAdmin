@@ -1,0 +1,44 @@
+html,body{
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	background-color: #fdf0ca;
+	/*background-color: #ddfdd1;护眼*/
+}
+input,select,textarea,button{
+	outline: none;
+}
+textarea{
+	resize: none;
+}
+a{
+	text-decoration: none;
+}
+.welcome{
+	width: 100%;
+	height: 160px;
+	background-color: #FFCC33;
+	line-height: 160px;
+	text-align: center;
+	color: #FFF;
+	font-size: 30px;
+}
+.scanborrow{
+	width: 80%;
+	margin: 0 auto;
+	height: 6%;
+	margin-top: 20%;
+	border-bottom: 1px solid #aaa;
+	font-size: 20px;
+	text-align: center;
+}
+.scanreturn{
+	width: 80%;
+	margin: 0 auto;
+	height: 6%;
+	margin-top: 15%;
+	border-bottom: 1px solid #aaa;
+	font-size: 20px;
+	text-align: center;
+}

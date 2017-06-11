@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+    <title>管理员登录</title>
+    <script type="text/javascript" src="js/jquery.js" ></script>
+    <script type="text/javascript" src="js/config.js" ></script>
+</head>
+<body>
+	<img class="background" src="img/background.jpg" width="100%" height="100%"></img>
+	<form class="login" id="form">
+		<div class="login-logo">管理员登录</div>
+		<div class="login-input">
+			<input type="text"/ class="login-user" name="username" placeholder="username">
+			<input type="password" class="login-psw" name="password" placeholder="password"/>
+		</div>
+		<input type="button" id="submit" value="submit" class="login-sub">
+	</form>
+	 <script type="text/javascript" src="js/base.js" ></script>
+	<script>
+		var SCOPE={
+			'url':http+'wxbook/api.php?c=admin&a=checkadmin',
+			'jump_url':'info.html'
+		}
+	</script>
+</body>
+</html>
